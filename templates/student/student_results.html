@@ -1,0 +1,41 @@
+{% extends "student/base.html" %}
+{% load static %}
+
+{% block content %}
+<div id="content" class="app-content"
+     style="background-image: url('{% static "dashboard/images/logo-xiu.png" %}'); background-size: contain; background-position: center; background-repeat: no-repeat;">
+<h1 class="page-header mb-3 deadlineQuiz" data-deadline="{{ result.quiz.deadline }}"
+    data-startTime="{{ result.start_time|date:'F d, Y H:i' }}" data-quiz-id="{{ result.quiz.id }}">
+    <span class="text-primary">{{ student }}</span> <small>Hush kelibsiz!</small>
+</h1>
+<p>
+</p>
+<div class="row">
+    {% for result in results %}
+        <div class="col-12">
+
+            <div class="card mb-1">
+
+                <div class="card-header fw-bold small">
+                    <h5>{{ forloop.counter }}. {{ result.quiz }}</h5>
+                </div>
+                <div class="card-body">
+                    {% if result.score < 60 %}
+                        <div class="text-danger">
+                            <b>Sizning natijangiz:</b> {{ result.score }} ball!
+                        </div>
+                    {% else %}
+                        <div class="text-success">
+                            <b>Sizning natijangiz:</b> {{ result.score }} ball!
+                        </div>
+                    {% endif %}
+                    <div>
+                        <b>Tugatgan vaqtingiz:</b> {{ result.end_time }} da!
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+
+</div>
+{% endblock content %}

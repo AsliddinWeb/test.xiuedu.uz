@@ -1,0 +1,213 @@
+{% extends "dashboard/base.html" %}
+
+{% block modals %}
+<div class="modal fade" id="modalDelete">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Ogohlantirish</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p id="modalText"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-bs-dismiss="modal">Yo'q</button>
+                <a href="#" type="button" id="deleteLink" class="btn btn-danger">Ha o'chiraman</a>
+            </div>
+    </div>
+  </div>
+</div>
+{% endblock modals %}
+
+
+{% block content %}
+<div id="content" class="app-content">
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <nav id="group_type" class="nav nav-underline flex-nowrap overflow-x-scroll">
+                        {% if group_type_all %}
+                            <a class="nav-link active" href="{% url 'student_list' %}">Barchasi</a>
+                        {% else %}
+                            <a class="nav-link" href="{% url 'student_list' %}">Barchasi</a>
+                        {% endif %}
+                      {% for group in group_types %}
+                            {% if group.id == pk %}
+                                <a class="nav-link active" href="{% url 'student_list_by_group_type' pk=group.id %}">{{ group.type }}</a>
+                            {% else %}
+                                <a class="nav-link" href="{% url 'student_list_by_group_type' pk=group.id %}">{{ group.type }}</a>
+                            {% endif %}
+                        {% endfor %}
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <nav id="groups" class="nav nav-underline flex-nowrap overflow-x-scroll">
+                        {% if group_all %}
+                            <a class="nav-link active" href="{% url 'student_list' %}">Barchasi</a>
+                        {% else %}
+                            <a class="nav-link" href="{% url 'student_list' %}">Barchasi</a>
+                        {% endif %}
+
+                      {% for group in groups %}
+                            {% if group.id == pk %}
+                                <a class="nav-link active" href="{% url 'student_list_by_group_id' pk=group.id %}">{{ group.group_name }}</a>
+                            {% else %}
+                                <a class="nav-link" href="{% url 'student_list_by_group_id' pk=group.id %}">{{ group.group_name }}</a>
+                            {% endif %}
+                        {% endfor %}
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-6">
+            <h1 class="page-header mb-3">
+                    {{ h1_text|safe }}
+            </h1>
+        </div>
+        <div class="col-xl-6 text-end">
+            <a class="btn btn-outline-info mb-2 mx-1" href="{% url 'student_excel_create' %}">
+                <i class="fa-solid fa-file-excel"></i> Excel orqali yuklash
+            </a>
+            <a class="btn btn-success mb-2" href="{% url 'student_create' %}">
+                <i class="fas fa-plus"></i> Talaba qo'shish
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body table-responsive">
+                    <form method="post" action="{% url 'student_checked_delete' %}">
+                        <div class="modal fade" id="modalAllDelete">
+                        <div class="modal-dialog modal-sm">
+                          <div class="modal-content">
+                                  <div class="modal-header">
+                                      <h5 class="modal-title">Ogohlantirish</h5>
+                                      <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                  </div>
+                                  <div class="modal-body">
+                                      <p class="fw-bold">Barcha tanlanganlarni o'chirmoqchimisiz?</p>
+                                  </div>
+                                  <div class="modal-footer">
+                                      <button type="button" class="btn btn-default" data-bs-dismiss="modal">Yo'q</button>
+                                      <button type="submit" class="btn btn-danger">Ha o'chiraman</button>
+                                  </div>
+                          </div>
+                        </div>
+                      </div>
+                        {% csrf_token %}
+                        <table class="table table-striped">
+                            {% if students %}
+                                <thead>
+                                <tr>
+                                    <th scope="col"><input type="checkbox" id="select-all"> #</th>
+                                    <th scope="col">Talaba</th>
+                                    <th scope="col">Guruh</th>
+                                    <th scope="col" class="text-end">Taxrirlash</th>
+                                </tr>
+                            </thead>
+                                <tbody>
+                                {% for student in students %}
+                                    <tr>
+                                        <th scope="row">
+                                            <input type="checkbox" name="student_ids" value="{{ student.id }}"> {{ forloop.counter }}
+                                        </th>
+                                        <td class="fw-bold">
+                                            <a class="text-decoration-none" href="{% url 'student_edit' pk=student.id %}">
+                                                {{ student.name }}
+                                            </a>
+                                        </td>
+                                        <td class="fw-bold text-info">
+                                            {{ student.group }}
+                                        </td>
+                                        <td align="right">
+                                            <a href="{% url 'student_edit' pk=student.id %}" class="btn btn-sm btn-outline-primary">
+                                                <i class="far fa-edit"></i>
+                                            </a>
+                                            <button type="button" data-bs-toggle="modal" data-bs-target="#modalDelete"
+                                                    data-student-id="{{ student.id }}" data-student-name="{{ student.name }}"
+                                                    class="btn btn-sm btn-outline-danger">
+                                                <i class="far fa-trash-alt"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                            {% else %}
+                                <h5 class="text-danger">Hozircha talabalar yo'q!</h5>
+                            {% endif %}
+                    </table>
+
+                        <div id="allDeleteDiv" class="d-none">
+                        <button type="button" data-bs-toggle="modal" data-bs-target="#modalAllDelete"
+                                class="btn btn-sm btn-outline-danger">
+                            <i class="far fa-trash-alt"></i> Barcha tanlanganlarni o'chirish
+                        </button>
+                    </div>
+                    </form>
+
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+</div>
+{% endblock content %}
+
+{% block scripts %}
+    <script>
+        $('#modalDelete').on('show.bs.modal', function (event) {
+            let button = $(event.relatedTarget);
+            let studentId = button.data('student-id');
+            let name = button.data('student-name');
+
+            document.getElementById('deleteLink').href = `/dashboard/student/students/${studentId}/delete/`;
+            document.getElementById('modalText').innerHTML = `Rostdan ham <b>${name}</b> ni o'chirmoqchimisiz?`;
+        });
+    </script>
+
+    <script>
+        // Script to handle "Select All" functionality
+        document.getElementById('select-all').addEventListener('change', function () {
+            var checkboxes = document.getElementsByName('student_ids');
+            for (var i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].checked = this.checked;
+            }
+            document.getElementById('allDeleteDiv').classList.remove('d-none');
+        });
+    </script>
+
+    <script>
+    // Get all checkboxes by their name attribute
+    var checkboxes = document.getElementsByName('student_ids');
+
+    // Add an event listener to each checkbox
+    checkboxes.forEach(function (checkbox) {
+        checkbox.addEventListener('change', function () {
+            document.getElementById('allDeleteDiv').classList.remove('d-none');
+
+            if (!this.checked) {
+                document.getElementById('select-all').checked = false;
+            }
+        });
+    });
+</script>
+
+{% endblock scripts %}

@@ -1,0 +1,198 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block content %}
+<div id="content" class="app-content" style="background-image: url('{% static "dashboard/images/logo-xiu.png" %}'); background-size: contain; background-position: center; background-repeat: no-repeat;">
+    <h1 class="page-header mb-3">
+        XALQARO INNOVATSION UNIVERSITET <small>Test Tizimi</small>
+    </h1>
+
+
+    <div class="row">
+
+        <div class="col-sm-12 col-md-6 col-lg-4">
+            <div class="card mb-3 flex-1">
+
+                <div class="card-body">
+                    <div class="d-flex mb-3">
+                        <div class="flex-grow-1">
+                            <a href="{% url 'grade_list' %}" class="text-decoration-none">
+                                <h5 class="mb-1 text-theme">Kurslar</h5>
+                            </a>
+                            <div>Barcha kurslar boshqaruvi</div>
+                        </div>
+                    </div>
+                    <div class="d-flex">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-1">{{ grades }} ta</h3>
+                            <div class="text-theme fw-600 fs-13px">
+                                <a href="{% url 'grade_list' %}" class="text-decoration-none">
+                                    <i class="fa fa-arrow-circle-right"></i> Ko'rish
+                                </a>
+
+                            </div>
+                        </div>
+                        <div class="w-50px h-50px bg-primary bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center">
+                            <i class="fa fa-list-alt fa-lg text-primary"></i>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-6 col-lg-4">
+            <div class="card mb-3 flex-1">
+
+                <div class="card-body">
+                    <div class="d-flex mb-3">
+                        <div class="flex-grow-1">
+                            <a href="{% url 'group_list' %}" class="text-decoration-none">
+                                <h5 class="mb-1 text-theme">Guruhlar</h5>
+                            </a>
+                            <div>Barcha guruhlar boshqaruvi</div>
+                        </div>
+                    </div>
+                    <div class="d-flex">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-1">{{ groups }} ta</h3>
+                            <div class="text-theme fw-600 fs-13px">
+                                <a href="{% url 'group_list' %}" class="text-decoration-none">
+                                    <i class="fa fa-arrow-circle-right"></i> Ko'rish
+                                </a>
+
+                            </div>
+                        </div>
+                        <div class="w-50px h-50px bg-primary bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center">
+                            <i class="fa fa-tags fa-lg text-primary"></i>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-6 col-lg-4">
+            <div class="card mb-3 flex-1">
+
+                <div class="card-body">
+                    <div class="d-flex mb-3">
+                        <div class="flex-grow-1">
+                            <a href="{% url 'student_list' %}" class="text-decoration-none">
+                                <h5 class="mb-1 text-theme">Talabalar</h5>
+                            </a>
+                            <div>Barcha talabalar ro'yhati</div>
+                        </div>
+                    </div>
+                    <div class="d-flex">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-1">{{ students }} ta</h3>
+                            <div class="text-theme fw-600 fs-13px">
+                                <a href="{% url 'student_list' %}" class="text-decoration-none">
+                                    <i class="fa fa-arrow-circle-right"></i> Ko'rish
+                                </a>
+
+                            </div>
+                        </div>
+                        <div class="w-50px h-50px bg-primary bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center">
+                            <i class="fa fa-users fa-lg text-primary"></i>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-6 col-lg-4">
+            <div class="card mb-3 flex-1">
+
+                <div class="card-body">
+                    <div class="d-flex mb-3">
+                        <div class="flex-grow-1">
+                            <a href="{% url 'subject_list' %}" class="text-decoration-none">
+                                <h5 class="mb-1 text-danger">Fanlar</h5>
+                            </a>
+                            <div>Barcha fanlar ro'yhati</div>
+                        </div>
+                    </div>
+                    <div class="d-flex">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-1">{{ subjects }} ta</h3>
+                            <div class="text-theme fw-600 fs-13px">
+                                <a href="{% url 'subject_list' %}" class="text-decoration-none text-danger">
+                                    <i class="fa fa-arrow-circle-right"></i> Ko'rish
+                                </a>
+
+                            </div>
+                        </div>
+                        <div class="w-50px h-50px bg-primary bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center">
+                            <i class="fa fa-file-alt fa-lg text-danger"></i>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-6 col-lg-4">
+            <div class="card mb-3 flex-1">
+
+                <div class="card-body">
+                    <div class="d-flex mb-3">
+                        <div class="flex-grow-1">
+                            <a href="{% url 'quiz_list' %}" class="text-decoration-none">
+                                <h5 class="mb-1 text-danger">Imtihonlar</h5>
+                            </a>
+                            <div>Barcha imtihonlar ro'yhati</div>
+                        </div>
+                    </div>
+                    <div class="d-flex">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-1">{{ quizs }} ta</h3>
+                            <div class="text-theme fw-600 fs-13px">
+                                <a href="{% url 'quiz_list' %}" class="text-decoration-none text-danger">
+                                    <i class="fa fa-arrow-circle-right"></i> Ko'rish
+                                </a>
+
+                            </div>
+                        </div>
+                        <div class="w-50px h-50px bg-primary bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center">
+                            <i class="fa fa-qrcode fa-lg text-danger"></i>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-6 col-lg-4">
+            <div class="card mb-3 flex-1">
+
+                <div class="card-body">
+                    <div class="d-flex mb-3">
+                        <div class="flex-grow-1">
+                            <a href="{% url 'result_list' %}" class="text-decoration-none">
+                                <h5 class="mb-1 text-danger">Natijalar</h5>
+                            </a>
+                            <div>Barcha natijalar ro'yhati</div>
+                        </div>
+                    </div>
+                    <div class="d-flex">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-1">{{ results }} ta</h3>
+                            <div class="text-theme fw-600 fs-13px">
+                                <a href="{% url 'result_list' %}" class="text-decoration-none text-danger">
+                                    <i class="fa fa-arrow-circle-right"></i> Ko'rish
+                                </a>
+
+                            </div>
+                        </div>
+                        <div class="w-50px h-50px bg-primary bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center">
+                            <i class="fa fa-table fa-lg text-danger"></i>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+
+</div>
+{% endblock content %}

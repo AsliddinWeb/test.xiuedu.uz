@@ -1,0 +1,280 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+<div id="content" class="app-content">
+
+    <div class="container">
+
+        <!-- Modal namuna -->
+        <div class="modal fade" id="questionsModal" tabindex="-1" aria-labelledby="questionsModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="questionsModalLabel">Namuna</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="small border rounded p-3">
+                            2+2 nechiga teng?
+                            <br>
+                            ====
+                            <br>
+                            3
+                            <br>
+                            ====
+                            <br>
+                            #4
+                            <br>
+                            ====
+                            <br>
+                            5
+                            <br>
+                            ====
+                            <br>
+                            6
+                            <br><br>
+                            +++++
+                            <br><br>
+                            5+5 nechiga teng?
+                            <br>
+                            ====
+                            <br>
+                            #10
+                            <br>
+                            ====
+                            <br>
+                            11
+                            <br>
+                            ====
+                            <br>
+                            12
+                            <br>
+                            ====
+                            <br>
+                            13
+                            <br>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Yopish</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Add -->
+        <div class="modal modal-lg fade" id="questionsAddModal" tabindex="-1" aria-labelledby="questionsAddModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div class="row justify-content-center">
+
+                            <div class="col-xl-12">
+
+                                <div class="row">
+
+                                    <div class="col-12">
+
+                                        <div class="mb-5">
+
+                                            <div class="card">
+                                                <div class="card-body pb-3">
+                                                    <h3 class="text-success">
+                                                        Savol qo'shish
+                                                    </h3>
+
+                                                    <form method="post"
+                                                          action="{% url 'subject_add_question' subject_id=instance.id %}"
+                                                          class="mt-3">
+                                                        {% csrf_token %}
+
+                                                        <div class="form-group mb-3">
+                                                            <label class="form-label" for="id_questions"><b>Savollar</b></label>
+
+                                                            {{ questions_add.questions }}
+                                                        </div>
+
+                                                        <button class="btn btn-success text-white" type="submit"><i
+                                                                class="far fa-plus"></i> Qo'shish
+                                                        </button>
+                                                        <a href="{% url 'subject_list' %}" class="btn btn-primary mx-1"><i
+                                                                class="fas fa-arrow-left"></i> Orqaga qaytish</a>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Yopish</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--        Content -->
+
+        <div class="row justify-content-center">
+
+            <div class="col-xl-10">
+
+                <div class="row">
+
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body pb-3">
+                                <h3 class="text-warning">
+                                    Fanni taxrirlash
+                                </h3>
+                                <p>
+                                    <b>Hozir: </b><u>{{ instance.title }}</u> ni o'zgartirmoqchisiz!
+                                </p>
+
+                                <form method="post">
+                                    {% csrf_token %}
+
+                                    <div class="form-group mb-3">
+                                        <label class="form-label" for="id_grade">Kurs</label>
+
+                                        {{ form.grade }}
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label class="form-label" for="id_title">Fan nomi</label>
+                                        {{ form.title }}
+                                    </div>
+
+                                    <button class="btn btn-warning text-white" type="submit"><i class="far fa-edit"></i>
+                                        O'zgartirish
+                                    </button>
+                                    <a href="{% url 'subject_list' %}" class="btn btn-primary mx-1"><i
+                                            class="fas fa-arrow-left"></i> Orqaga qaytish</a>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="row justify-content-center mt-4">
+
+        <div class="col-xl-10">
+
+            <div class="row">
+
+                <div class="col-12">
+
+                    <div class="mb-5">
+
+                        <div class="card">
+                            <div class="card-body pb-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h3>
+                                    Savollar
+                                </h3>
+
+                                <div align="right" class="mb-3">
+                                    <button type="button" class="btn btn-sm btn-outline-primary mx-1"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#questionsModal">
+                                        Namuna
+                                    </button>
+                                    <!-- Button trigger modal -->
+                                    <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal"
+                                            data-bs-target="#questionsAddModal">
+                                        <i class="fa fa-plus"></i>
+                                        Savol qo'shish
+                                    </button>
+                                    <!-- Button trigger modal -->
+
+                                </div>
+
+                                </div>
+                                <div>
+                                    <table class="table table-striped">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Savol</th>
+                                            <th scope="col" class="text-end">Aktiv</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for q in instance.questions.all %}
+                                            <tr>
+                                                <th scope="row">{{ forloop.counter }}</th>
+                                                <td>
+                                                    <a class="text-decoration-none" href="{% url 'subject_question_detail' question_id=q.id %}">{{ q.text }}</a>
+                                                </td>
+                                                <td align="right" class="d-flex justify-content-end">
+                                                    {% if q.is_active %}
+                                                        <div class="form-check form-switch">
+                                                            <input onchange="checkboxChange('{{ q.id }}')" type="checkbox" class="form-check-input" checked id="switch_{{ q.id }}">
+                                                        </div>
+                                                    {% else %}
+                                                        <div class="form-check form-switch">
+                                                            <input onchange="checkboxChange('{{ q.id }}')" type="checkbox" class="form-check-input" id="switch_{{ q.id }}">
+                                                        </div>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                        {% empty %}
+                                            <tr>
+                                                <th scope="row">0</th>
+                                                <td>Hozircha savollar yo'q!</td>
+                                                <td align="right"></td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+{% endblock content %}
+
+{% block scripts %}
+<script>
+    switchers = document.querySelectorAll(".form-switch");
+    function checkboxChange(id) {
+        switcher = document.querySelector(`#switch_${id}`)
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', `/dashboard/quiz/subjects/edit-question/${id}/`, true);
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                // Ma'lumotni olish va uni ishlatish (mumkin)
+                var responseData = JSON.parse(xhr.responseText);
+                console.log(responseData);
+            }
+        };
+        xhr.send();
+    }
+</script>
+{% endblock scripts %}

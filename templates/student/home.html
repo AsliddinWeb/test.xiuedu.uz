@@ -1,0 +1,120 @@
+{% extends "student/base.html" %}
+{% load static %}
+
+{% block content %}
+<div id="content" class="app-content"
+     style="background-image: url('{% static "dashboard/images/logo-xiu.png" %}'); background-size: contain; background-position: center; background-repeat: no-repeat;">
+<h1 class="page-header mb-3">
+    XALQARO INNOVATSION UNIVERSITET <small>Test Tizimi</small>
+</h1>
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Kirish</h5>
+                <p class="card-text">Ro'yhatdan guruhingiz va o'z ism familiyangizni tanlang!</p>
+                <p class="card-text text-danger"><b>Diqqat:</b> O'z boshimchalik bilan boshqa talabaning joyidan test
+                    ishlamoqchi bo'lsangiz sizning natijalaringiz bekor qilinadi!</p>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row border p-3 rounded flex-column justify-content-center">
+                        <div class="col-md-6 col-sm-12" style="margin: 0 auto;">
+                            <div class="form-group mb-4 w-100 text-center">
+                                    <label class="form-label fw-bold text-primary" for="gradeSelect">Kursni tanlang</label>
+                                    <select name="grade_id" class="form-select" id="gradeSelect" required>
+                                        <option selected disabled>------------</option>
+                                        {% for grade in grades %}
+                                            <option value="{{ grade.id }}">{{ grade.grade }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                        </div>
+
+                        <div class="col-md-6 col-sm-12" style="margin: 0 auto;">
+                            <div class="form-group mb-4 w-100 text-center">
+                                    <label class="form-label fw-bold text-info" for="groupSelect">Guruhingizni tanlang</label>
+                                    <select name="group_id" class="form-select" id="groupSelect" required>
+                                        <option selected disabled>------------</option>
+                                    </select>
+                                </div>
+                        </div>
+
+                        <div class="col-md-6 col-sm-12" style="margin: 0 auto;">
+                            <div class="form-group mb-3 w-100 text-center">
+                                    <label class="form-label fw-bold text-success" for="studentSelect">Ism Familiyangizni tanlang</label>
+                                    <select name="student_id" class="form-select" id="studentSelect" required>
+                                        <option selected disabled>------------</option>
+                                    </select>
+                                </div>
+                        </div>
+
+                        <div class="text-center">
+                            <button id="submitButton" disabled type="submit" class="btn btn-primary mt-2 px-3">Kirish</button>
+                        </div>
+                    </div>
+
+
+                </form>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</div>
+{% endblock content %}
+
+{% block scripts %}
+<script>
+    document.getElementById('gradeSelect').addEventListener('change', function() {
+        var gradeId = this.value;
+        fetch('/get/groups/' + gradeId + '/')
+            .then(response => response.json())
+            .then(data => {
+                var groupSelect = document.getElementById('groupSelect');
+                groupSelect.innerHTML = '<option selected disabled>------------</option>';
+                data.forEach(function(group) {
+                    var option = document.createElement('option');
+                    option.value = group.id;
+                    option.textContent = group.group_name;
+                    groupSelect.appendChild(option);
+                });
+            });
+    });
+</script>
+
+<script>
+    document.getElementById('groupSelect').addEventListener('change', function() {
+        var groupId = this.value;
+        fetch('/get/students/' + groupId + '/')
+            .then(response => response.json())
+            .then(data => {
+                var groupSelect = document.getElementById('studentSelect');
+                groupSelect.innerHTML = '<option selected disabled>------------</option>';
+                data.forEach(function(student) {
+                    var option = document.createElement('option');
+                    option.value = student.id;
+                    option.textContent = student.name;
+                    groupSelect.appendChild(option);
+                });
+            });
+    });
+
+    gradeSelect.addEventListener('change', toggleSubmitButton);
+    groupSelect.addEventListener('change', toggleSubmitButton);
+    studentSelect.addEventListener('change', toggleSubmitButton);
+
+    function toggleSubmitButton() {
+        if (gradeSelect.value === "" || groupSelect.value === "" || studentSelect.value === "------------") {
+            submitButton.disabled = true;
+        } else {
+            submitButton.disabled = false;
+        }
+    }
+</script>
+{% endblock scripts %}

@@ -1,0 +1,160 @@
+{% extends "dashboard/base.html" %}
+
+{% block modals %}
+<div class="modal fade" id="modalDelete">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Ogohlantirish</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p id="modalText"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-bs-dismiss="modal">Yo'q</button>
+                <a href="#" type="button" id="deleteLink" class="btn btn-danger">Ha o'chiraman</a>
+            </div>
+    </div>
+  </div>
+</div>
+
+
+
+{% endblock modals %}
+
+{% block content %}
+<div id="content" class="app-content">
+    <div class="row">
+        <div class="col-xl-6">
+            <h1 class="page-header mb-3">
+                    Barcha kurslar ro'yhati
+            </h1>
+        </div>
+        <div class="col-xl-6 text-end">
+            <a class="btn btn-success mb-2" href="{% url 'grade_create' %}">
+                <i class="fas fa-plus"></i> Kurs qo'shish
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <form method="post" action="{% url 'grade_checked_delete' %}">
+                        <div class="modal fade" id="modalAllDelete">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Ogohlantirish</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="fw-bold">Barcha tanlanganlarni o'chirmoqchimisiz?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-bs-dismiss="modal">Yo'q</button>
+                <button type="submit" class="btn btn-danger">Ha o'chiraman</button>
+            </div>
+    </div>
+  </div>
+</div>
+                        {% csrf_token %}
+                        <table class="table table-striped">
+                            {% if grades %}
+                                <thead>
+                                <tr>
+                                    <th scope="col"><input type="checkbox" id="select-all"> #</th>
+                                    <th class="text-center" scope="col">Kurs</th>
+                                    <th scope="col" class="text-end">Taxrirlash</th>
+                                </tr>
+                            </thead>
+                                <tbody>
+                                {% for grade in grades %}
+                                    <tr>
+                                        <th scope="row">
+                                            <input type="checkbox" name="grade_ids" value="{{ grade.id }}"> {{ forloop.counter }}
+                                        </th>
+                                        <td class="fw-bold text-center">
+                                            <a class="text-decoration-none" href="{% url 'grade_edit' pk=grade.id %}">
+                                                {{ grade.grade }}
+                                            </a>
+                                        </td>
+                                        <td align="right">
+                                            <a href="{% url 'grade_edit' pk=grade.id %}" class="btn btn-sm btn-outline-primary">
+                                                <i class="far fa-edit"></i>
+                                            </a>
+                                            <button type="button" data-bs-toggle="modal" data-bs-target="#modalDelete"
+                                                    data-grade-id="{{ grade.id }}" data-grade-name="{{ grade.grade }}"
+                                                    class="btn btn-sm btn-outline-danger">
+                                                <i class="far fa-trash-alt"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                            {% else %}
+                                <h5 class="text-danger">Hozircha kurslar yo'q!</h5>
+                            {% endif %}
+                    </table>
+
+                        <div id="allDeleteDiv" class="d-none">
+                        <button type="button" data-bs-toggle="modal" data-bs-target="#modalAllDelete"
+                                class="btn btn-sm btn-outline-danger">
+                            <i class="far fa-trash-alt"></i> Barcha tanlanganlarni o'chirish
+                        </button>
+                    </div>
+                    </form>
+
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+</div>
+{% endblock content %}
+
+{% block scripts %}
+    <script>
+        $('#modalDelete').on('show.bs.modal', function (event) {
+            let button = $(event.relatedTarget);
+            let gradeId = button.data('grade-id');
+            let gradeName = button.data('grade-name');
+
+            document.getElementById('deleteLink').href = `/dashboard/student/grades/${gradeId}/delete/`;
+            document.getElementById('modalText').innerHTML = `Rostdan ham <b>${gradeName}</b> ni o'chirmoqchimisiz?`;
+        });
+    </script>
+
+    <script>
+        // Script to handle "Select All" functionality
+        document.getElementById('select-all').addEventListener('change', function () {
+            var checkboxes = document.getElementsByName('grade_ids');
+            for (var i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].checked = this.checked;
+            }
+            document.getElementById('allDeleteDiv').classList.remove('d-none');
+        });
+    </script>
+
+    <script>
+    // Get all checkboxes by their name attribute
+    var checkboxes = document.getElementsByName('grade_ids');
+
+    // Add an event listener to each checkbox
+    checkboxes.forEach(function (checkbox) {
+        checkbox.addEventListener('change', function () {
+            document.getElementById('allDeleteDiv').classList.remove('d-none');
+
+            if (!this.checked) {
+                document.getElementById('select-all').checked = false;
+            }
+        });
+    });
+</script>
+{% endblock scripts %}

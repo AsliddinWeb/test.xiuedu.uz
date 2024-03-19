@@ -1,0 +1,119 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block css_links %}
+<link href="{% static 'dashboard/css/picker.min.css' %}" rel="stylesheet">
+{% endblock css_links %}
+
+{% block content %}
+<div id="content" class="app-content">
+
+    <div class="container">
+
+        <div class="row justify-content-center">
+
+            <div class="col-xl-10">
+
+                <div class="row">
+
+                    <div class="col-12">
+                        <h1 class="page-header">
+                            Imtihon qo'shish
+                        </h1>
+                        <hr class="mb-4">
+
+                        <div class="mb-5">
+                            <p>
+                                <b>Namuna: </b><u>Ingliz tili fanidan oraliq nazorat ishi.</u> Shu tartibda kiriting!
+                            </p>
+                            <div class="card">
+                                <div class="card-body pb-2">
+                                    <form method="post">
+                                        {% csrf_token %}
+
+                                        <div class="form-group mb-3">
+                                            <label class="form-label" for="id_title">Imtihon nomi:</label>
+
+                                            {{ form.title }}
+                                        </div>
+
+                                        <div class="form-group mb-3">
+                                            <label class="form-label" for="id_quiz_type">Imtihon turi:</label>
+
+                                            {{ form.quiz_type }}
+                                        </div>
+
+                                        <div class="form-group mb-3">
+                                            <label class="form-label text-info" for="id_start_time">Boshlanish vaqti:</label>
+
+                                            {{ form.start_time }}
+                                        </div>
+
+                                        <div class="form-group mb-3">
+                                            <label class="form-label text-danger" for="id_end_time">Tugash vaqti:</label>
+
+                                            {{ form.end_time }}
+                                        </div>
+
+                                        <div class="form-group mb-3">
+                                            <label class="form-label text-success" for="id_deadline">Test davomiyligi:</label>
+                                            {{ form.deadline }}
+                                        </div>
+
+                                        <div class="form-group mb-3">
+                                            <label class="form-label" for="id_max_questions">Savollar soni:</label>
+                                            {{ form.max_questions }}
+                                        </div>
+
+                                        <div class="form-group mb-3 text-warning">
+                                            <label class="form-label" for="id_subject">Fanni tanlang:</label>
+                                            {{ form.subject }}
+                                        </div>
+
+                                        <div class="form-group mb-3">
+                                            <label class="form-label text-success" for="id_groups">Guruhlar:</label>
+                                            {{ form.groups }}
+                                        </div>
+
+                                        <div class="form-group mb-3">
+                                            <label class="form-label text-danger" for="id_no_permission_students">Talabani chetlatish:</label>
+                                            {{ form.no_permission_students }}
+                                        </div>
+
+                                        <div class="form-group mb-3">
+                                            <label class="form-label text-info" for="id_maximum_attempts">Urinishlar soni:</label>
+                                            {{ form.maximum_attempts }}
+                                        </div>
+
+                                        <div class="form-check form-switch mb-3">
+                                            <label class="form-check-label text-success" for="id_status">Imtihon xolati:</label>
+                                            {{ form.status }}
+                                        </div>
+
+                                        <button class="btn btn-success" type="submit"><i class="fas fa-plus"></i> Qo'shish</button>
+                                        <a href="{% url 'quiz_list' %}" class="btn btn-primary mx-1"><i class="fas fa-arrow-left"></i> Orqaga qaytish</a>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+{% endblock content %}
+
+{% block scripts %}
+<script src="{% static 'dashboard/js/picker.min.js' %}"></script>
+<script>
+    $('#id_groups').picker({texts: {trigger: 'Guruhni belgilash'}});
+    $('#id_no_permission_students').picker({texts: {trigger: 'Talabalar ro\'yhati'}, search: true});
+</script>
+{% endblock scripts %}

@@ -1,0 +1,238 @@
+{% extends "dashboard/base.html" %}
+{% load duration_filters %}
+
+{% block modals %}
+<div class="modal fade" id="modalDelete">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Ogohlantirish</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p id="modalText"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-bs-dismiss="modal">Yo'q</button>
+                <a href="#" type="button" id="deleteLink" class="btn btn-danger">Ha o'chiraman</a>
+            </div>
+    </div>
+  </div>
+</div>
+
+
+{% endblock modals %}
+
+{% block content %}
+<div id="content" class="app-content">
+    <div class="row">
+        <div class="col-xl-6">
+            <h1 class="page-header mb-3">
+                    Natijalar ro'yhati
+            </h1>
+        </div>
+        {% if request.user.is_superuser %}
+            <div class="col-xl-6 text-end">
+                <a class="btn btn-success mb-2" href="{% url 'result_create' %}">
+                    <i class="fas fa-plus"></i> Natija qo'shish
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="row">
+
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body table-responsive">
+                    <form method="post" action="{% url 'result_checked_delete' %}">
+                        <div class="modal fade" id="modalAllDelete">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Ogohlantirish</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="fw-bold">Barcha tanlanganlarni o'chirmoqchimisiz?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-bs-dismiss="modal">Yo'q</button>
+                <button type="submit" class="btn btn-danger">Ha o'chiraman</button>
+            </div>
+    </div>
+  </div>
+</div>
+
+                        <div style="margin-bottom: 5rem;">
+                            <table class="table table-striped">
+                            {% if quizes %}
+                                <thead>
+                                <tr>
+                                    <th scope="col"> #</th>
+
+                                    <th scope="col">Imtihon</th>
+                                </tr>
+                            </thead>
+                                <tbody>
+                                {% for quiz in quizes %}
+                                    <tr>
+                                        <th scope="row">
+                                            {{ forloop.counter }}
+                                        </th>
+
+                                        <td class="fw-bold">
+                                            <a class="text-decoration-none" href="{% url 'result_list_by_quiz_id' pk=quiz.id %}">
+                                                {{ quiz.title }}
+                                            </a>
+                                        </td>
+
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                            {% else %}
+                                <h5 class="text-danger">Hozircha imtihonlar yo'q!</h5>
+                            {% endif %}
+                    </table>
+                        </div>
+                        <hr>
+                        {% csrf_token %}
+                        <table class="table table-striped mt-3">
+                            {% if results %}
+                                <thead>
+                                <tr>
+                                    {% if request.user.is_superuser %}
+                                        <th scope="col"><input type="checkbox" id="select-all"> #</th>
+                                    {% else %}
+                                        <th scope="col"> #</th>
+                                    {% endif %}
+
+                                    <th scope="col">Talaba</th>
+                                    <th scope="col">Imtihon</th>
+                                    <th scope="col">Natija</th>
+                                    <th scope="col">Ketgan vaqt</th>
+                                    {% if request.user.is_superuser %}
+                                        <th scope="col" class="text-end">Taxrirlash</th>
+                                    {% endif %}
+                                </tr>
+                            </thead>
+                                <tbody>
+                                {% for result in results %}
+                                    <tr>
+                                        {% if request.user.is_superuser %}
+                                            <th scope="row">
+                                                <input type="checkbox" name="result_ids" value="{{ result.id }}"> {{ forloop.counter }}
+                                            </th>
+                                        {% else %}
+                                            <th scope="row">
+                                                {{ forloop.counter }}
+                                            </th>
+                                        {% endif %}
+
+                                        {% if request.user.is_superuser %}
+                                            <td class="fw-bold">
+                                                <a class="text-decoration-none" href="{% url 'result_edit' pk=result.id %}">
+                                                    {{ result.student }}
+                                                </a>
+                                            </td>
+                                        {% else %}
+                                            <td class="fw-bold">
+                                                <span class="text-decoration-none">
+                                                    {{ result.student }}
+                                                </span>
+                                            </td>
+                                        {% endif %}
+
+                                        <td>
+                                            {{ result.quiz }}
+                                        </td>
+                                        <td>
+                                            {{ result.score }}
+                                        </td>
+
+                                        <td>
+                                            {% if result.start_time|duration_in_minutes:result.end_time %}
+                                                {{ result.start_time|duration_in_minutes:result.end_time }} daqiqa!
+                                            {% else %}
+                                                <b class="text-danger">Test yakunlanmagan!</b>
+                                            {% endif %}
+                                        </td>
+                                        {% if request.user.is_superuser %}
+                                            <td align="right">
+                                                <a href="{% url 'result_edit' pk=result.id %}" class="btn btn-sm btn-outline-primary">
+                                                    <i class="far fa-edit"></i>
+                                                </a>
+                                                <button type="button" data-bs-toggle="modal" data-bs-target="#modalDelete"
+                                                        data-result-id="{{ result.id }}" data-result-name="{{ result.student }}"
+                                                        class="btn btn-sm btn-outline-danger">
+                                                    <i class="far fa-trash-alt"></i>
+                                                </button>
+                                            </td>
+                                        {% endif %}
+
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                            {% else %}
+                                <h5 class="text-danger">Hozircha natijalar yo'q!</h5>
+                            {% endif %}
+                    </table>
+
+                        <div id="allDeleteDiv" class="d-none">
+                        <button type="button" data-bs-toggle="modal" data-bs-target="#modalAllDelete"
+                                class="btn btn-sm btn-outline-danger">
+                            <i class="far fa-trash-alt"></i> Barcha tanlanganlarni o'chirish
+                        </button>
+                    </div>
+                    </form>
+
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+</div>
+{% endblock content %}
+
+{% block scripts %}
+    <script>
+        $('#modalDelete').on('show.bs.modal', function (event) {
+            let button = $(event.relatedTarget);
+            let resultId = button.data('result-id');
+            let resultName = button.data('result-name');
+
+            document.getElementById('deleteLink').href = `/dashboard/quiz/result/${resultId}/delete/`;
+            document.getElementById('modalText').innerHTML = `Rostdan ham <b>${resultName}</b> ni o'chirmoqchimisiz?`;
+        });
+    </script>
+
+    <script>
+        // Script to handle "Select All" functionality
+        document.getElementById('select-all').addEventListener('change', function () {
+            var checkboxes = document.getElementsByName('result_ids');
+            for (var i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].checked = this.checked;
+            }
+            document.getElementById('allDeleteDiv').classList.remove('d-none');
+        });
+    </script>
+
+    <script>
+    // Get all checkboxes by their name attribute
+    var checkboxes = document.getElementsByName('result_ids');
+
+    // Add an event listener to each checkbox
+    checkboxes.forEach(function (checkbox) {
+        checkbox.addEventListener('change', function () {
+            document.getElementById('allDeleteDiv').classList.remove('d-none');
+
+            if (!this.checked) {
+                document.getElementById('select-all').checked = false;
+            }
+        });
+    });
+</script>
+{% endblock scripts %}

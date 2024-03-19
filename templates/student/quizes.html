@@ -1,0 +1,152 @@
+{% extends "student/base.html" %}
+{% load static %}
+{% load shuffle_tags %}
+
+{% block content %}
+<div>
+    <!-- Modal -->
+<div class="modal fade" id="closeQuiz" tabindex="-1" aria-labelledby="closeQuizLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="closeQuizLabel">Testni rostdan ham yakunlamoqchimisiz?</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Ha yoki yo'q tugmasini bosing!
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Yo'q</button>
+        <a href="{% url 'quiz_end' quiz_id=result.quiz.id %}" type="button" class="btn btn-primary">Ha yakunlayman</a>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<div id="content" class="app-content"
+     style="background-image: url('{% static "dashboard/images/logo-xiu.png" %}'); background-size: contain; background-position: center; background-repeat: no-repeat;">
+<h1 class="page-header mb-3 deadlineQuiz" data-deadline="{{ result.quiz.deadline }}"
+    data-startTime="{{ result.start_time|date:'F d, Y H:i' }}" data-quiz-id="{{ result.quiz.id }}">
+    <span class="text-primary">{{ student }}</span> <small>Hush kelibsiz!</small>
+</h1>
+<p>
+</p>
+<div class="row">
+    <div class="d-flex justify-content-end">
+        <div id="timer" class="fw-bold text-primary mt-5 mx-3" style="position: fixed; z-index: 999;"></div>
+    </div>
+
+    <div class="progress mb-3">
+      <div class="progress-bar rounded border" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+    {% for question in result.answers.all %}
+        <div class="col-12">
+
+            <div class="card mb-1">
+
+                <div class="card-header fw-bold small">
+                    <h5>{{ forloop.counter }}. {{ question.question.text }}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="form-check">
+                        {% for answer in question.question.answers.all|shuffle_answers %}
+                        {% if question.chosen_answer.id == answer.id %}
+                            <div class="mb-1">
+                                <input onchange="checkboxChange('{{ question.id }}', '{{ answer.id }}')" checked name="question_{{ question.id }}" class="form-check-input" type="radio" value="{{ answer.id }}" id="question_{{ question.id }}">
+                                <label class="form-check-label" for="question_{{ question.id }}">{{ answer.text }}</label>
+                            </div>
+                        {% else %}
+                            <div class="mb-1">
+                                <input onchange="checkboxChange('{{ question.id }}', '{{ answer.id }}')" name="question_{{ question.id }}" class="form-check-input" type="radio" value="{{ answer.id }}" id="question_{{ question.id }}">
+                                <label class="form-check-label" for="question_{{ question.id }}">{{ answer.text }}</label>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+
+    <div class="my-3 text-center">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#closeQuiz">
+          Testni yakunlash
+        </button>
+    </div>
+</div>
+{% endblock content %}
+
+{% block scripts %}
+<script>
+    function checkboxChange(question_id, answer_id) {
+        console.log(question_id, answer_id)
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', `/answer/${Number(question_id)}/${Number(answer_id)}/`, true);
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                // Ma'lumotni olish va uni ishlatish (mumkin)
+                var responseData = JSON.parse(xhr.responseText);
+                console.log(responseData);
+            }
+        };
+        xhr.send();
+    }
+</script>
+
+<script>
+    let start_time_str = document.querySelector('.deadlineQuiz').getAttribute('data-startTime');
+    var start_time = new Date(start_time_str);
+    var current_time = new Date();
+
+    var difference = current_time - start_time; // Millisekundlarda farqni hisoblash
+    var seconds_difference = Math.floor(difference / 1000); // Sekundlarga o'tkazish
+
+    console.log("Start vaqti: " + start_time);
+    console.log("Hozirgi vaqt: " + current_time);
+    console.log("Farq: " + seconds_difference + " soniya");
+    // -----
+    function timeToSeconds(timeString) {
+        var parts = timeString.split(":");
+        var hours = parseInt(parts[0]);
+        var minutes = parseInt(parts[1]);
+        var seconds = parseInt(parts[2]);
+        return (hours * 3600) + (minutes * 60) + seconds;
+    }
+    let timeee = document.querySelector('.deadlineQuiz').getAttribute('data-deadline');
+    let quizId = document.querySelector('.deadlineQuiz').getAttribute('data-quiz-id');
+    // Taymer
+
+    var totalTime = timeToSeconds(timeee) - seconds_difference;
+    var timeLeft = timeToSeconds(timeee) - seconds_difference;
+
+    if (seconds_difference < totalTime) {
+        totalTime = timeToSeconds(timeee) - seconds_difference
+    } else {
+        window.location.href = `/room/${quizId}/end/`;
+    }
+
+    var timerInterval = setInterval(function() {
+        var minutes = Math.floor(timeLeft / 60);
+        var seconds = timeLeft % 60;
+        // HTML elementini yangilash
+        document.getElementById('timer').innerHTML = minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+
+        // Agar vaqt tugagan bo'lsa, taymer to'xtatiladi
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            document.getElementById('timer').innerHTML = "Vaqt tugadi";
+            // Agar kerak bo'lsa, boshqa harakatlar amalga oshiriladi
+            // Masalan, chiziqchani o'zgartirish yoki boshqa funktsiyalar...
+        } else {
+            timeLeft--;
+
+            var progress = document.querySelector('.progress-bar');
+            var percent = ((timeLeft / timeToSeconds(timeee)) * 100);
+
+            progress.style.width = percent + '%';
+        }
+    }, 1000);
+</script>
+{% endblock scripts %}
